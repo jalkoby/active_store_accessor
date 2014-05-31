@@ -20,11 +20,25 @@ And then execute:
 
 After you add gem into Gemfile everything is done for you. Now you can declare your serialized properties in a next way:
 
-    # basic usage(where `info` is a store column)
-    active_store_accessor :info, age: :integer, birthday: :time
+```ruby
+class Profile < ActiveRecord::Base
+  # basic usage(where `info` is a store column)
+  active_store_accessor :info, age: :integer, birthday: :time
 
-    # with default values
-    active_store_accessor :info, score: { type: :float, default: 0.0 }, active: { type: :boolean, default: true }
+  # with default values
+  active_store_accessor :info, score: { type: :float, default: 0.0 }, 
+    active: { type: :boolean, default: true }
+end
+
+profile = Profile.new
+profile.age = "23"
+profile.age # => 23
+profile.birthday = Time.new(2014, 5, 31)
+profile.birthday # => 2014-05-31 00:00:00
+profile.score # => 0.0
+profile.score = 4.5
+profile.score # => 4.5
+```
 
 ## Requirements & dependencies
 
