@@ -1,5 +1,9 @@
 # ActiveStoreAccessor
 
+[![Build Status](https://travis-ci.org/jalkoby/active_store_accessor.svg?branch=master)](https://travis-ci.org/jalkoby/active_store_accessor)
+[![Gem Version](https://badge.fury.io/rb/active_store_accessor.svg)](http://badge.fury.io/rb/active_store_accessor)
+[![Code Climate](https://codeclimate.com/github/jalkoby/active_store_accessor.png)](https://codeclimate.com/github/jalkoby/active_store_accessor)
+
 Get more from ActiveRecord::Store
 
 ## Installation
