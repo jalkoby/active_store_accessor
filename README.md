@@ -4,7 +4,7 @@
 [![Gem Version](https://badge.fury.io/rb/active_store_accessor.svg)](http://badge.fury.io/rb/active_store_accessor)
 [![Code Climate](https://codeclimate.com/github/jalkoby/active_store_accessor.png)](https://codeclimate.com/github/jalkoby/active_store_accessor)
 
-Get more from ActiveRecord::Store
+With `active_store_accessor` you can have boolean, integer, float, time store attributes which would act like a regular schema columns.  
 
 ## Installation
 
@@ -15,10 +15,6 @@ Add this line to your application's Gemfile:
 And then execute:
 
     $ bundle
-
-Or install it yourself as:
-
-    $ gem install active_store_accessor
 
 ## Usage
 
