@@ -26,6 +26,10 @@ After you add gem into Gemfile everything is done for you. Now you can declare y
     # with default values
     active_store_accessor :info, score: { type: :float, default: 0.0 }, active: { type: :boolean, default: true }
 
+## Requirements & dependencies
+
+This library has been tested on ruby 1.9.3+ and activerecord 3.2+. Any other configurations might have potential issues. `active_store_accessor` doesn't have any external dependency(expect activerecord) and contains only one file with one module.
+
 ## Contributing
 
 1. Fork it ( https://github.com/[my-github-username]/active_store_accessor/fork )
