@@ -6,16 +6,6 @@
 
 With `active_store_accessor` you can have boolean, integer, float, time store attributes which would act like a regular schema columns.  
 
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'active_store_accessor'
-
-And then execute:
-
-    $ bundle
-
 ## Usage
 
 After you add gem into Gemfile everything is done for you. Now you can declare your serialized properties in a next way:
@@ -40,6 +30,16 @@ profile.score = 4.5
 profile.score # => 4.5
 ```
 
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'active_store_accessor'
+
+And then execute:
+
+    $ bundle
+    
 ## Requirements & dependencies
 
 This library has been tested on ruby 1.9.3+ and activerecord 3.2+. Any other configurations might have potential issues. `active_store_accessor` doesn't have any external dependency(expect activerecord) and contains only one file with one module.
