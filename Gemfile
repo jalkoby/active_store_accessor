@@ -11,4 +11,5 @@ ar_version = case ar_version
     "~> 4.1.0"
   end
 gem "activerecord", ar_version
-gem "sqlite3"
+gem "sqlite3", platform: :ruby
+gem "activerecord-jdbcsqlite3-adapter", platform: :jruby
