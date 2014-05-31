@@ -17,3 +17,7 @@ class Profile < ActiveRecord::Base
   active_store_accessor :info, birthday: :time
   active_store_accessor :info, confirmed: :boolean
 end
+
+class AdminProfile < Profile
+  active_store_accessor :info, level: :integer
+end

@@ -22,4 +22,11 @@ describe ActiveStoreAccessor do
     assert_equal profile.birthday, Time.utc(2014, 5, 12)
     assert_equal profile.confirmed, true
   end
+
+  it "should support model inheritance" do
+    admin_profile = AdminProfile.new(age: 23, level: 5)
+
+    assert_equal admin_profile.age, 23
+    assert_equal admin_profile.level, 5
+  end
 end

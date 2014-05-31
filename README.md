@@ -1,6 +1,6 @@
 # ActiveStoreAccessor
 
-TODO: Write a gem description
+Get more from ActiveRecord::Store
 
 ## Installation
 
@@ -18,7 +18,13 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+After you add gem into Gemfile everything is done for you. Now you can declare your serialized properties in a next way:
+
+    # basic usage(where `info` is a store column)
+    active_store_accessor :info, age: :integer, birthday: :time
+
+    # with default values
+    active_store_accessor :info, score: { type: :float, default: 0.0 }, active: { type: :boolean, default: true }
 
 ## Contributing
 
