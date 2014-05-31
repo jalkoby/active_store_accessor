@@ -10,6 +10,11 @@ module ActiveStoreAccessor
     attrs.each do |attr_name, options|
       options = { type: options.to_s } unless options.is_a?(Hash)
       type = options.fetch(:type) { raise ArgumentError, "please specify type of attribute" }.to_s
+
+      # time for activerecord is only a hours and minutes without date part
+      # but for most rubist and rails developer it should contains a date too
+      type = :datetime if type == :time
+
       args = [attr_name.to_s, options[:default], type]
       active_store_attributes[attr_name] = ActiveRecord::ConnectionAdapters::Column.new(*args)
 
