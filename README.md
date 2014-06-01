@@ -4,7 +4,7 @@
 [![Gem Version](https://badge.fury.io/rb/active_store_accessor.svg)](http://badge.fury.io/rb/active_store_accessor)
 [![Code Climate](https://codeclimate.com/github/jalkoby/active_store_accessor.png)](https://codeclimate.com/github/jalkoby/active_store_accessor)
 
-With `active_store_accessor` you can have boolean, integer, float, time store attributes which would act like a regular schema columns.  
+With `active_store_accessor` you can have boolean, integer, float, time store attributes which would act like a regular schema columns.
 
 ## Usage
 
@@ -16,7 +16,7 @@ class Profile < ActiveRecord::Base
   active_store_accessor :info, age: :integer, birthday: :time
 
   # with default values
-  active_store_accessor :info, score: { type: :float, default: 0.0 }, 
+  active_store_accessor :info, score: { type: :float, default: 0.0 },
     active: { type: :boolean, default: true }
 end
 
@@ -39,10 +39,10 @@ Add this line to your application's Gemfile:
 And then execute:
 
     $ bundle
-    
+
 ## Requirements & dependencies
 
-This library has been tested on ruby 1.9.3+ and activerecord 3.2+. Any other configurations might have potential issues. `active_store_accessor` doesn't have any external dependency(expect activerecord) and contains only one file with one module.
+This library has been tested on ruby 1.9.3+ and activerecord 4.0+. Any other configurations might have potential issues. `active_store_accessor` doesn't have any external dependency(expect activerecord) and contains only one file with one module.
 
 ## Contributing
 

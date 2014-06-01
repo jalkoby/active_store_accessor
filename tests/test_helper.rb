@@ -2,12 +2,18 @@ require "minitest/autorun"
 require "active_record"
 require "active_store_accessor"
 
-ActiveRecord::Base.establish_connection(adapter: 'sqlite3', database: ':memory:')
+ActiveRecord::Base.establish_connection(adapter: 'postgresql', database: 'asa_test', user: 'rails')
 ActiveRecord::Base.logger = Logger.new(STDOUT)
+ActiveRecord::Base.connection.execute "drop schema public cascade"
+ActiveRecord::Base.connection.execute "create schema public"
+ActiveRecord::Base.connection.execute "CREATE EXTENSION IF NOT EXISTS hstore"
 
 ActiveRecord::Schema.define do
+  enable_extension "hstore"
+
   create_table :profiles do |t|
     t.text :info
+    t.hstore :keys
   end
 end
 
@@ -16,6 +22,9 @@ class Profile < ActiveRecord::Base
   active_store_accessor :info, rank: :float
   active_store_accessor :info, birthday: :time
   active_store_accessor :info, confirmed: :boolean
+
+  active_store_accessor :keys, active: :boolean
+  active_store_accessor :keys, pi: :float
 end
 
 class AdminProfile < Profile

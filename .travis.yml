@@ -1,8 +1,11 @@
 env:
-  - "RAILS_VERSION=3.2"
-  - "RAILS_VERSION=4.0"
-  - "RAILS_VERSION=master"
+  - "AR_VERSION=4.0"
+  - "AR_VERSION=4.1"
 rvm:
   - 1.9.3
   - 2.0.0
   - 2.1.2
+addons:
+  postgresql: "9.3"
+before_script:
+  - psql -c 'create database asa_test;' -U rails

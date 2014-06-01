@@ -6,7 +6,12 @@ module ActiveStoreAccessor
   end
 
   def active_store_accessor(column_name, attrs)
-    store column_name, accessors: attrs.keys
+    if columns.detect { |column| column.name == column_name.to_s }.text?
+      serialize(column_name) unless serialized_attributes.include?(column_name.to_s)
+    end
+
+    store_accessor column_name, *attrs.keys
+
     attrs.each do |attr_name, options|
       options = { type: options.to_s } unless options.is_a?(Hash)
       type = options.fetch(:type) { raise ArgumentError, "please specify type of attribute" }.to_s

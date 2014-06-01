@@ -20,7 +20,7 @@ describe ActiveStoreAccessor do
     assert_equal profile.score, 100
     assert_equal profile.rank, 3213.312
     assert_equal profile.birthday, Time.utc(2014, 5, 12)
-    assert_equal profile.confirmed, true
+    assert profile.confirmed
   end
 
   it "should support model inheritance" do
@@ -28,5 +28,12 @@ describe ActiveStoreAccessor do
 
     assert_equal admin_profile.age, 23
     assert_equal admin_profile.level, 5
+  end
+
+  it "handles properly hstore" do
+    profile = Profile.create(active: true, pi: 3.14)
+
+    assert profile.active
+    assert_equal profile.pi, 3.14
   end
 end
