@@ -12,13 +12,13 @@ describe ActiveStoreAccessor do
 
     profile.age = "20"
     profile.score = 100.32
-    profile.rank = "3213.312"
+    profile.rank = "3213.317"
     profile.birthday = Time.utc(2014, 5, 12)
     profile.confirmed = "1"
 
     assert_equal profile.age, 20
     assert_equal profile.score, 100
-    assert_equal profile.rank, 3213.312
+    assert_equal profile.rank, 3213.32
     assert_equal profile.birthday, Time.utc(2014, 5, 12)
     assert profile.confirmed
   end

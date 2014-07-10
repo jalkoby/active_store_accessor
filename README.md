@@ -4,11 +4,11 @@
 [![Gem Version](https://badge.fury.io/rb/active_store_accessor.svg)](http://badge.fury.io/rb/active_store_accessor)
 [![Code Climate](https://codeclimate.com/github/jalkoby/active_store_accessor.png)](https://codeclimate.com/github/jalkoby/active_store_accessor)
 
-With `active_store_accessor` you can have boolean, integer, float, time store attributes which would act like a regular schema columns.
+`active_store_accessor` makes work with store accessors more productive. There is no need to cast a serialized attribute to required type(boolean, time, float, etc). Just define it with a tiny wrapper method and everything is done for you.
 
 ## Usage
 
-After you add gem into Gemfile everything is done for you. Now you can declare your serialized properties in a next way:
+Basic use case:
 
 ```ruby
 class Profile < ActiveRecord::Base
@@ -30,6 +30,25 @@ profile.score = 4.5
 profile.score # => 4.5
 ```
 
+Extra logic in property methods:
+```ruby
+# Story:
+#  users have a rank, but if an user was locked by admins
+#  nobody can change it rank & it's value should be equal to zero
+class User
+  active_store_accessor :info, rank: :float
+
+  def rank
+    0 if locked?
+    super
+  end
+
+  def rank=(value)
+    super unless locked?
+  end
+end
+```
+
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -42,7 +61,7 @@ And then execute:
 
 ## Requirements & dependencies
 
-This library has been tested on ruby 1.9.3+ and activerecord 4.0+. Any other configurations might have potential issues. `active_store_accessor` doesn't have any external dependency(expect activerecord) and contains only one file with one module.
+This library has been tested on ruby 1.9.3+ and activerecord 4.0+.
 
 ## Contributing
 

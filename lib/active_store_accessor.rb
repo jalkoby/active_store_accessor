@@ -14,7 +14,7 @@ module ActiveStoreAccessor
 
     attrs.each do |attr_name, options|
       options = { type: options.to_s } unless options.is_a?(Hash)
-      type = options.fetch(:type) { raise ArgumentError, "please specify type of attribute" }.to_s
+      type = options.fetch(:type) { raise ArgumentError, "please specify type of `#{ attr_name }` attribute" }.to_s
 
       # time for activerecord is only a hours and minutes without date part
       # but for most rubist and rails developer it should contains a date too
@@ -23,7 +23,7 @@ module ActiveStoreAccessor
       args = [attr_name.to_s, options[:default], type]
       active_store_attributes[attr_name] = ActiveRecord::ConnectionAdapters::Column.new(*args)
 
-      class_eval <<-RUBY
+      _active_store_accessor_module.module_eval <<-RUBY
         def #{ attr_name }
           column = self.class.active_store_attributes[:#{ attr_name }]
           value = column.type_cast(super)
@@ -34,6 +34,16 @@ module ActiveStoreAccessor
           super self.class.active_store_attributes[:#{ attr_name }].type_cast_for_write(value)
         end
       RUBY
+    end
+  end
+
+  private
+
+  def _active_store_accessor_module
+    @_active_store_accessor_module ||= begin
+      mod = Module.new
+      include mod
+      mod
     end
   end
 end

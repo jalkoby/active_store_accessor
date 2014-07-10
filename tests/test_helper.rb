@@ -25,6 +25,11 @@ class Profile < ActiveRecord::Base
 
   active_store_accessor :keys, active: :boolean
   active_store_accessor :keys, pi: :float
+
+  def rank=(value)
+    super(value)
+    super(rank.round(2)) if rank
+  end
 end
 
 class AdminProfile < Profile
