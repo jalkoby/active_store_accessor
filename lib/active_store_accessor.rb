@@ -6,7 +6,11 @@ module ActiveStoreAccessor
   end
 
   def active_store_accessor(column_name, attrs)
-    if columns.detect { |column| column.name == column_name.to_s }.text?
+    column = columns.detect { |column| column.name == column_name.to_s }
+    if !column
+      logger.warn("Column '#{column_name}' for active store accessor does not exist in model #{name}.")
+      return
+    elsif column.text?
       serialize(column_name) unless serialized_attributes.include?(column_name.to_s)
     end
 
