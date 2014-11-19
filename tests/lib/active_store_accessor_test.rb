@@ -36,10 +36,4 @@ describe ActiveStoreAccessor do
     assert profile.active
     assert_equal profile.pi, 3.14
   end
-
-  it "serialized column does not exists" do
-    user_profile = UserProfile.new(age: 5)
-
-    assert !user_profile.respond_to?(:level)
-  end
 end

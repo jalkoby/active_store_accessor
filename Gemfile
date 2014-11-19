@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 ar_version = ENV["AR_VERSION"]
 ar_version = case ar_version
   when "4.0" then "~> 4.0.0"
+  when "4.2" then "~> 4.2.0.beta4"
   else
     "~> 4.1.0"
   end

@@ -35,7 +35,3 @@ end
 class AdminProfile < Profile
   active_store_accessor :info, level: :integer
 end
-
-class UserProfile < Profile
-  active_store_accessor :data, level: :integer
-end
