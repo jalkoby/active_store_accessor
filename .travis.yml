@@ -9,4 +9,4 @@ rvm:
 addons:
   postgresql: "9.3"
 before_script:
-  - psql -c 'create database asa_test;' -U rails
+  - psql -c 'create database asa_test;' -U rails -d postgres
