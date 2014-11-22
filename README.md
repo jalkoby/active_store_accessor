@@ -65,7 +65,7 @@ This library has been tested on ruby 1.9.3+ and activerecord 4.0+.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/active_store_accessor/fork )
+1. Fork it ( https://github.com/jalkoby/active_store_accessor/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
