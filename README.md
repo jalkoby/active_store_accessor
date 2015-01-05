@@ -4,15 +4,14 @@
 [![Gem Version](https://badge.fury.io/rb/active_store_accessor.svg)](http://badge.fury.io/rb/active_store_accessor)
 [![Code Climate](https://codeclimate.com/github/jalkoby/active_store_accessor.png)](https://codeclimate.com/github/jalkoby/active_store_accessor)
 
-`active_store_accessor` makes work with store accessors more productive. There is no need to cast a serialized attribute to required type(boolean, time, float, etc). Just define it with a tiny wrapper method and everything is done for you.
+`active_store_accessor` makes work with store accessors more productive. There is no need to cast a serialized attribute to a required type(boolean, time, float, etc). Just define it with a tiny wrapper method and everything is done for you.
 
 ## Usage
 
-Basic use case:
+The basic usage:
 
 ```ruby
 class Profile < ActiveRecord::Base
-  # basic usage(where `info` is a store column)
   active_store_accessor :info, age: :integer, birthday: :time
 
   # with default values
@@ -30,11 +29,11 @@ profile.score = 4.5
 profile.score # => 4.5
 ```
 
-Extra logic in property methods:
+The extra logic in a property methods:
 ```ruby
 # Story:
-#  users have a rank, but if an user was locked by admins
-#  nobody can change it rank & it's value should be equal to zero
+#  users have a rank, but if a user was locked by admins
+#  nobody can change a rank & it's value should be equal to zero
 class User
   active_store_accessor :info, rank: :float
 
