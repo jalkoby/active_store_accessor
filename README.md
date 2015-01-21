@@ -4,7 +4,7 @@
 [![Gem Version](https://badge.fury.io/rb/active_store_accessor.svg)](http://badge.fury.io/rb/active_store_accessor)
 [![Code Climate](https://codeclimate.com/github/jalkoby/active_store_accessor.png)](https://codeclimate.com/github/jalkoby/active_store_accessor)
 
-`active_store_accessor` makes work with store accessors more productive. There is no need to cast a serialized attribute to a required type(boolean, time, float, etc). Just define it with a tiny wrapper method and everything is done for you.
+`active_store_accessor` makes a work with store accessors more productive. There is no need to cast a serialized attribute to a required type(boolean, time, float, etc). Just define it with a tiny wrapper method and everything is done for you.
 
 ## Usage
 
@@ -45,6 +45,72 @@ class User
   def rank=(value)
     super unless locked?
   end
+end
+```
+
+## Adding a custom type
+Add a custom type is easy enough:
+
+```ruby
+# using a block
+ActiveStoreAccessor.add_type(:even) do |builder|
+  builder.to_source { |value| (value.to_i / 2) * 2 }
+end
+
+# using a lambda
+ActiveStoreAccessor.add_type(:even) do |builder|
+  to_source = lambda { |value| (value.to_i / 2) * 2 }
+  builder.to_source(to_source)
+end
+
+# using a object with #call method
+class EvenConvert
+  def call(value)
+    (value.to_i / 2) * 2
+  end
+end
+
+ActiveStoreAccessor.add_type(:even) do |builder|
+  builder.to_source(EvenConvert.new)
+end
+```
+
+Sometimes you need to deserialize your value of a custom type. To do it look at the following example:
+
+```ruby
+ActiveStoreAccessor.add_type(:point) do |builder|
+  builder.to_source do |value|
+    "#{ value.x },#{ value.y }"
+  end
+
+  builder.from_source do |value|
+    parts = value.split(',')
+    Point.new(parts[0], parts[1])
+  end
+end
+```
+
+There is a common issue when you use `block`-style to define a custom type:
+
+```ruby
+ActiveStoreAccessor.add_type(:point) |builder|
+  builder.to_source do |value|
+    return unless value.is_a?(Point)
+    # ...
+  end
+end
+```
+
+Ruby will rise an error Unexpected Return (LocalJumpError). To avoid it replace a block by a lambda:
+
+```ruby
+ActiveStoreAccessor.add_type(:point) |builder|
+  to_source = lambda do |value|
+    return unless value.is_a?(Point)
+    # ...
+  end
+
+  builder.to_source(to_source)
 end
 ```
 
