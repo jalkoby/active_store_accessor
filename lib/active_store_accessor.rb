@@ -1,63 +1,122 @@
+require_relative "active_store_accessor/builder"
+require_relative "active_store_accessor/rails"
+require_relative "active_store_accessor/type"
+
 module ActiveStoreAccessor
-  def active_store_attributes
-    return @active_store_attributes if @active_store_attributes
+  extend self
 
-    @active_store_attributes = superclass.respond_to?(:active_store_attributes) ? superclass.active_store_attributes : {}
+  def types
+    @types ||= []
   end
 
-  def active_store_accessor(column_name, attrs)
-    column = columns.detect { |column| column.name == column_name.to_s }
-    if !column
-      raise "[active_store_accessor] The column '#{column_name}' does not exist in the model #{name}."
-    elsif column.type == :text
-      serialize(column_name) unless serialized_attributes.include?(column_name.to_s)
+  def add_type(*names)
+    raise_arg_error("You could use only symbols for name") if names.any? { |name| !name.is_a?(Symbol) }
+    builder = Builder.new(names)
+    yield builder
+    types << builder.to_type
+  end
+
+  def find_type(name, options, model_name)
+    raise_arg_error("Please use a symbol for a setting type in #{ model_name }.") unless name.is_a?(Symbol)
+    type_args = types.detect { |type_args| type_args[0].include?(name) }
+    unless type_args
+      raise_arg_error("#{ name } is unknown. Please recheck a type's name or add it by `ActiveStoreAccessor.add_type`.")
     end
+    Type.new(type_args[1], type_args[2], options[:default])
+  end
 
-    store_accessor column_name, *attrs.keys
+  def raise_error(klass, message)
+    raise klass, "[active_store_accessor] #{ message }"
+  end
 
-    attrs.each do |attr_name, options|
-      options = { type: options.to_s } unless options.is_a?(Hash)
-      type = options.fetch(:type) { raise ArgumentError, "please specify type of `#{ attr_name }` attribute" }.to_s
+  def raise_arg_error(message)
+    raise_error ArgumentError, message
+  end
 
-      config = if connection.respond_to?(:lookup_cast_type)
-        column = connection.lookup_cast_type(type)
-        [column.method(:type_cast_from_database), column.method(:type_cast_for_database)]
+  def raise_convertion_error(value, type)
+    raise_error klass, "ActiveStoreAccessor doesn't know how to convert #{ value.class } into #{ type }"
+  end
+
+  add_type(:integer) do |builder|
+    builder.to_source { |value| value.to_i rescue nil }
+  end
+
+  add_type(:float, :double) do |builder|
+    builder.to_source { |value| value.to_f unless value.nil? }
+  end
+
+  add_type(:decimal) do |builder|
+    builder.from_source { |value| value.to_d unless value.nil? }
+
+    builder.to_source do |value|
+      if value.respond_to?(:to_d)
+        value.to_d.to_s
       else
-        # time for activerecord is only a hours and minutes without date part
-        # but for most rubist and rails developer it should contains a date too
-        type = 'datetime' if type == 'time'
-        args = [attr_name.to_s, options[:default], type]
-        column = ActiveRecord::ConnectionAdapters::Column.new(*args)
-        [column.method(:type_cast), column.method(:type_cast_for_write)]
+        value.to_s.presence
       end
-
-      config << options[:default]
-      active_store_attributes[attr_name] = config
-
-      _active_store_accessor_module.module_eval <<-RUBY
-        def #{ attr_name }
-          getter, _, default = self.class.active_store_attributes[:#{ attr_name }]
-          value = getter.call(super)
-          value.nil? ? default : value
-        end
-
-        def #{ attr_name }=(value)
-          _, setter, _ = self.class.active_store_attributes[:#{ attr_name }]
-          super setter.call(value)
-        end
-      RUBY
     end
   end
 
-  private
+  # time for activerecord is only a hours and minutes without date part
+  # but for most rubist and rails developer it should contains a date too
+  add_type(:time, :datetime) do |builder|
+    builder.from_source { |value| Time.parse(value) if value }
 
-  def _active_store_accessor_module
-    @_active_store_accessor_module ||= begin
-      mod = Module.new
-      include mod
-      mod
+    to_source = lambda do |value|
+      return unless value.present?
+
+      case value
+      when String then Time.parse(value).to_s
+      when Fixnum then Time.at(value).to_s
+      when Date, Time, DateTime, ActiveSupport::TimeZone then value.to_s
+      else
+        raise_convertion_error(value, "Time")
+      end
     end
+
+    builder.to_source(to_source)
+  end
+
+  add_type(:date) do |builder|
+    to_source = lambda do |value|
+      return if value.nil?
+      case value
+      when String then Date.parse(value).to_s
+      when Date then value.to_s
+      when Time, DateTime then value.to_date.to_s
+      else
+        raise_convertion_error(value, "Date")
+      end
+    end
+
+    builder.to_source(to_source)
+  end
+
+  add_type(:text, :string, :binary) do |builder|
+    builder.to_source { |value| value.presence }
+  end
+
+  add_type(:boolean, :bool) do |builder|
+    true_values = [true, 1, '1', 't', 'T', 'true', 'TRUE', 'on', 'ON'].to_set
+
+    builder.to_source do |value|
+      if value.nil? || (value.is_a?(String) && value.empty?)
+        nil
+      else
+        true_values.include?(value)
+      end
+    end
+  end
+
+  add_type(:array, :list) do |builder|
+    builder.to_source { |value| ActiveSupport::JSON.encode(Array(value)) unless value.nil? }
+    builder.from_source { |value| ActiveSupport::JSON.decode(value) unless value.nil? }
+  end
+
+  add_type(:hash, :dictonary) do |builder|
+    builder.to_source { |value| ActiveSupport::JSON.encode(Hash(value)) unless value.nil? }
+    builder.from_source { |value| ActiveSupport::JSON.decode(value) unless value.nil? }
   end
 end
 
-ActiveSupport.on_load(:active_record) { ActiveRecord::Base.extend(ActiveStoreAccessor) }
+ActiveSupport.on_load(:active_record) { ActiveRecord::Base.extend(ActiveStoreAccessor::Rails) }

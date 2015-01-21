@@ -25,6 +25,8 @@ class Profile < ActiveRecord::Base
 
   active_store_accessor :keys, active: :boolean
   active_store_accessor :keys, pi: :float
+  active_store_accessor :keys, photos: :list
+  active_store_accessor :keys, scores: :hash
 
   def rank=(value)
     super(value)
