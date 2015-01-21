@@ -114,7 +114,22 @@ module ActiveStoreAccessor
   end
 
   add_type(:hash, :dictonary) do |builder|
-    builder.to_source { |value| ActiveSupport::JSON.encode(Hash(value)) unless value.nil? }
+    if RUBY_VERSION =~ /1\.9/
+      builder.to_source do |value|
+        value = if value.is_a?(Hash)
+          value
+        elsif value.respond_to?(:to_h)
+          value.to_h
+        elsif value.respond_to?(:to_hash)
+          value.to_hash
+        else
+          raise_convertion_error(value, 'Hash')
+        end
+        ActiveSupport::JSON.encode(Hash(value)) unless value.nil?
+      end
+    else
+      builder.to_source { |value| ActiveSupport::JSON.encode(Hash(value)) unless value.nil? }
+    end
     builder.from_source { |value| ActiveSupport::JSON.decode(value) unless value.nil? }
   end
 end
