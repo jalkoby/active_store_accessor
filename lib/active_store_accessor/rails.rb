@@ -8,11 +8,7 @@ module ActiveStoreAccessor
 
     def active_store_accessor(column_name, attrs)
       column = columns.detect { |column| column.name == column_name.to_s }
-      if !column
-        ::ActiveStoreAccessor.raise_arg_error "The column `#{ column_name }` does not exist in the model #{ name }."
-      elsif column.type == :text
-        serialize(column_name) unless serialized_attributes.include?(column_name.to_s)
-      end
+      serialize(column_name) if column.try(:type) == :text unless serialized_attributes.include?(column_name.to_s)
 
       store_accessor column_name, *attrs.keys
 
